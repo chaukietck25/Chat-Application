@@ -27,6 +27,7 @@ pipeline {
         stage('Build and deploy Docker image') {
             when {
                 branch 'main'
+                branch "jenkins"
             }
             steps {
                 script{
@@ -48,11 +49,12 @@ pipeline {
         stage('Deploy into EC2') {
             when {
                 branch "main"
+                branch "jenkins"
             }
             steps {
                 sh 'echo "Deploy!"'
                 script {
-                    sshagent(credentials: ['quanly-ssh']) {
+                    sshagent(credentials: ['ubuntu-key']) {
                         // // SSH into the remote server and run docker-compose down
                         // sh '''
                         //     ssh ec2-user@54.179.96.14 << EOF
@@ -60,19 +62,17 @@ pipeline {
                         //         docker-compose -f /home/ec2-user/app/docker-compose.yml down
                         //     fi
                         // '''
-
-                        //Delte old compose file
-                        sh 'ssh ec2-user@54.254.223.51 "sudo rm -rf /home/ec2-user/app/docker-compose.yml /home/ec2-user/app/nginx.conf"'
+                        sh 'ssh -o StrictHostKeyChecking=no ec2-user@54.169.206.88 "mkdir /home/ec2-user/app"'
 
                         // Copy docker-compose
-                        sh 'scp docker-compose.yml ec2-user@54.254.223.51:/home/ec2-user/app'
+                        sh 'scp -o StrictHostKeyChecking=no docker-compose.yml ec2-user@54.169.206.88:/home/ec2-user/app'
 
                         // Copy nginx.conf file
-                        sh 'scp nginx.conf ec2-user@54.254.223.51:/home/ec2-user/app'
+                        sh 'scp -o StrictHostKeyChecking=no nginx.conf ec2-user@54.169.206.88:/home/ec2-user/app'
 
                         // Start container
                         sh '''
-                        ssh ec2-user@54.254.223.51 "docker-compose -f /home/ec2-user/app/docker-compose.yml up -d"
+                        ssh -o StrictHostKeyChecking=no ec2-user@54.169.206.88 "docker-compose -f /home/ec2-user/app/docker-compose.yml up -d"
                         '''
                     }
                 }
