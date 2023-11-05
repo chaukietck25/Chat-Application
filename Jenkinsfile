@@ -26,9 +26,7 @@ pipeline {
 
         stage('Build and deploy Docker image') {
             when {
-                expression {
-                    env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'jenkins'
-                }
+                branch "main"
             }
             steps {
                 script{
@@ -49,9 +47,7 @@ pipeline {
 
         stage('Deploy into EC2') {
             when {
-                expression {
-                    env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'jenkins'
-                }
+                branch "main"
             }
             steps {
                 sh 'echo "Deploy!"'
