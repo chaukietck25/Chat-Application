@@ -64,7 +64,7 @@ pipeline {
                         //         docker-compose -f /home/ec2-user/app/docker-compose.yml down
                         //     fi
                         // '''
-                        sh 'ssh -o StrictHostKeyChecking=no ec2-user@54.169.206.88 "mkdir /home/ec2-user/app"'
+                        sh 'ssh -o StrictHostKeyChecking=no ec2-user@54.169.206.88 "mkdir -p /home/ec2-user/app"'
 
                         // Copy docker-compose
                         sh 'scp -o StrictHostKeyChecking=no docker-compose.yml ec2-user@54.169.206.88:/home/ec2-user/app'
