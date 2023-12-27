@@ -77,7 +77,7 @@ pipeline {
 
                         // Copy .env file securely
                         withCredentials([file(credentialsId: 'qldapm-env', variable: 'ENV_FILE')]) {
-                            sh "echo '${ENV_FILE}' > .env"
+                            sh "cat '${ENV_FILE}' > .env"
                             sh "scp -o StrictHostKeyChecking=no .env ec2-user@${env.EC2_IP}:/home/ec2-user/app"
                         }
 
