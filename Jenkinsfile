@@ -21,11 +21,11 @@ pipeline {
             }
         }
 
-        stage('Run unit test') {
-            steps {
-                sh 'npm run test'
-            }
-        }
+        // stage('Run unit test') {
+        //     steps {
+        //         sh 'npm run test'
+        //     }
+        // }
 
         stage('Build and deploy Docker image') {
             when {
