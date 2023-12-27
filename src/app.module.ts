@@ -16,16 +16,18 @@ import { GatewayModule } from './gateway/gateway.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { UploadModule } from './upload/upload.module';
 import { BlockEntity } from './user/entities/block.entity';
+import { config } from 'dotenv';
+config(); // Loads the environment variables from .env
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'sql12.freemysqlhosting.net',
-      port: 3306,
-      username: 'sql12659071',
-      password: 'lJzIr9B6d1',
-      database: 'sql12659071',
+      host: process.env.DATABASE_HOST,
+      port: parseInt(process.env.DATABASE_PORT),
+      username: process.env.DATABASE_USERNAME,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_DBNAME,
       entities: [FriendEntity, UserEntity, FriendRequestEntity, ChatRoomEntity, RoomMemberEntity, MessageEntity, BlockEntity],
     }),
     CacheModule.register(),
