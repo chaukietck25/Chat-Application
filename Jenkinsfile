@@ -20,7 +20,7 @@ pipeline {
 
         stage('Run unit test') {
             steps {
-                sh 'npm run test -- --passWithNoTests'
+                sh 'npm run test'
             }
         }
 
