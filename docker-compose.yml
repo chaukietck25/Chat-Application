@@ -3,6 +3,8 @@ version: '3.7'
 services:
   app:
     image: phatnguyen1812/qldapm:latest
+    env_file:
+      - .env
     ports:
       - '3000:3000'
     restart: always

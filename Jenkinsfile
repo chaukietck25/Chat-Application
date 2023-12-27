@@ -1,6 +1,9 @@
 pipeline {
     agent any
 
+    environment {
+        EC2_IP = '47.128.155.64'
+    }
     tools{
         nodejs 'node-20'
     }
@@ -45,40 +48,40 @@ pipeline {
             }
         }
 
-        // stage('Deploy into EC2') {
-        //     when {
-        //         branch "main"
-        //     }
-        //     steps {
-        //         sh 'echo "Deploy!"'
-        //         script {
-        //             sshagent(credentials: ['ubuntu-key']) {
-        //                 // // SSH into the remote server and run docker-compose down
-        //                 sh 'ssh -o StrictHostKeyChecking=no ec2-user@13.212.216.244 "docker-compose -f /home/ec2-user/app/docker-compose.yml down"'
-
-        //                 sh 'ssh -o StrictHostKeyChecking=no ec2-user@13.212.216.244 "mkdir -p /home/ec2-user/app"'
-
-        //                 sh 'ssh -o StrictHostKeyChecking=no ec2-user@13.212.216.244 "docker pull phatnguyen1812/qldapm:latest"'
-
-        //                 // Copy docker-compose
-        //                 sh 'scp -o StrictHostKeyChecking=no docker-compose.yml ec2-user@13.212.216.244:/home/ec2-user/app'
-
-        //                 // Copy nginx.conf file
-        //                 sh 'scp -o StrictHostKeyChecking=no nginx.conf ec2-user@13.212.216.244:/home/ec2-user/app'
-
-        //                 // Start container
-        //                 sh '''
-        //                 ssh -o StrictHostKeyChecking=no ec2-user@13.212.216.244 "docker-compose -f /home/ec2-user/app/docker-compose.yml up -d"
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
-
-        stage('Deploy into remote server') {
+        stage('Deploy into EC2') {
+            when {
+                branch "main"
+            }
             steps {
-                sh 'echo "Deploy"'
-                sh 'curl https://api.render.com/deploy/srv-cm06bled3nmc738kci70?key=4quxqTnKL-0'
+                sh 'echo "Deploy!"'
+                script {
+                    sshagent(credentials: ['ubuntu-key']) {
+
+                        // // SSH into the remote server and run docker-compose down
+                        sh 'ssh -o StrictHostKeyChecking=no ec2-user@${env.EC2_IP} "docker-compose -f /home/ec2-user/app/docker-compose.yml down"'
+
+                        sh 'ssh -o StrictHostKeyChecking=no ec2-user@${env.EC2_IP} "mkdir -p /home/ec2-user/app"'
+
+                        sh 'ssh -o StrictHostKeyChecking=no ec2-user@${env.EC2_IP} "docker pull phatnguyen1812/qldapm:latest"'
+
+                        // Copy docker-compose
+                        sh 'scp -o StrictHostKeyChecking=no docker-compose.yml ec2-user@${env.EC2_IP}:/home/ec2-user/app'
+
+                        // Copy nginx.conf file
+                        sh 'scp -o StrictHostKeyChecking=no nginx.conf ec2-user@${env.EC2_IP}:/home/ec2-user/app'
+
+                        // Copy .env file securely
+                        withCredentials([file(credentialsId: 'qldapm-env', variable: 'ENV_FILE')]) {
+                            sh "echo '${ENV_FILE}' > .env"
+                            sh 'scp -o StrictHostKeyChecking=no .env ec2-user@${env.EC2_IP}:/home/ec2-user/app'
+                        }
+
+                        // Start container
+                        sh '''
+                        ssh -o StrictHostKeyChecking=no ec2-user@${env.EC2_IP} "docker-compose -f /home/ec2-user/app/docker-compose.yml up -d"
+                        '''
+                    }
+                }
             }
         }
     }
