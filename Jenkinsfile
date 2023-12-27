@@ -58,7 +58,12 @@ pipeline {
                     sshagent(credentials: ['ubuntu-key']) {
                         
                         // SSH into the remote server and run docker-compose down
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@${env.EC2_IP} 'docker-compose -f /home/ec2-user/app/docker-compose.yml down'"
+                        sh """
+                            ssh -o StrictHostKeyChecking=no ec2-user@${env.EC2_IP} '
+                                docker-compose -f /home/ec2-user/app/docker-compose.yml down ||
+                                echo "docker-compose down failed, but continuing with deployment"
+                            '
+                        """
 
                         sh "ssh -o StrictHostKeyChecking=no ec2-user@${env.EC2_IP} 'mkdir -p /home/ec2-user/app'"
 
