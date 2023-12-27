@@ -82,9 +82,9 @@ pipeline {
                         }
 
                         // Start container
-                        sh '''
-                        ssh -o StrictHostKeyChecking=no ec2-user@${env.EC2_IP} "docker-compose -f /home/ec2-user/app/docker-compose.yml up -d"
-                        '''
+                        sh """
+                        ssh -o StrictHostKeyChecking=no ec2-user@${env.EC2_IP} 'docker-compose -f /home/ec2-user/app/docker-compose.yml up -d'
+                        """
                     }
                 }
             }
