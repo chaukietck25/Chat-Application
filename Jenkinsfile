@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        EC2_IP = '47.128.155.64'
+        EC2_IP = '13.212.186.183'
     }
     tools{
         nodejs 'node-20'
