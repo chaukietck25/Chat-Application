@@ -12,6 +12,7 @@ import { GetDetailUserResponse } from './response/get-detail.response';
 import { UserController } from './user.controller';
 import { UserModule } from './user.module';
 import { UserService } from './user.service';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 describe('UserService', () => {
     let userController: UserController;
@@ -61,6 +62,24 @@ describe('UserService', () => {
             jest.spyOn(userService, 'getDetailUser').mockImplementation(async () => result);
 
             expect(await userService.getDetailUser(userId, getDetailUserDto)).toBe(result);
+        });
+    });
+
+    describe('getDetailUser', () => {
+        it('should return null', async () => {
+            //Data input
+            const userId = 10
+            const getDetailUserDto: GetDetailUserDto = {
+                email: 'namnhat123@gmail.com',
+                username: ''
+            }
+
+            //Result expected
+
+            //Test
+            jest.spyOn(userService, 'getDetailUser').mockImplementation(async () => null);
+
+            expect(await userService.getDetailUser(userId, getDetailUserDto)).toBe(null);
         });
     });
 });
